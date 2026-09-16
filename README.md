@@ -1,19 +1,25 @@
 # toaster
 
-Zero-Config Toast-Benachrichtigungen für den Browser. Kein CSS-Import, kein
-Build-Schritt, kein Framework-Zwang — `npm install` und `showToast(...)`
-aufrufen.
+[![Web Builder](https://img.shields.io/badge/Web%20Builder-toaster.johanneshehl.com-2563eb?style=flat-square)](https://toaster.johanneshehl.com)
+
+Zero-config toast notifications for the browser. No CSS import, no build
+step, no framework lock-in — `npm install` and call `showToast(...)`.
+
+> Want to design your toasts visually instead of hand-writing config? Use
+> the hosted builder at **[toaster.johanneshehl.com](https://toaster.johanneshehl.com)**
+> to configure types, colors, animations and timers, then copy the generated
+> code straight into your project.
 
 ```js
 const { showToast } = require('toaster');
 
-showToast('Gespeichert!', { type: 'success' });
+showToast('Saved!', { type: 'success' });
 ```
 
 ## Installation
 
-Lokal als `file:`-Dependency (siehe Hauptprojekt-README für Details zu
-`npm link` vs. `file:`-Pfad):
+Locally as a `file:` dependency (see the main project's README for details
+on `npm link` vs. a `file:` path):
 
 ```json
 "dependencies": {
@@ -25,102 +31,101 @@ Lokal als `file:`-Dependency (siehe Hauptprojekt-README für Details zu
 npm install
 ```
 
-## Schnellstart
+## Quick start
 
 ```js
 import { showToast } from 'toaster';
 
-showToast('Hallo Welt!');
+showToast('Hello world!');
 
-showToast('Das hat geklappt.', {
+showToast('That worked.', {
   type: 'success',
   position: 'top-center',
   duration: 4000,
 });
 ```
 
-## Optionen (`ToastOptions`)
+## Options (`ToastOptions`)
 
-| Option | Typ | Standard | Beschreibung |
+| Option | Type | Default | Description |
 |---|---|---|---|
-| `duration` | `number` | `3000` | Anzeigedauer in ms. |
-| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Wo der Toast erscheint. |
-| `type` | `string` | `'default'` | Beliebiger Typ-Schlüssel. `'default'/'success'/'error'/'warning'/'info'` bringen fertige Farben mit, jeder andere Name ist ein frei definierbarer eigener Typ (Farben/Verhalten über `typePresets` festlegen). |
-| `animation` | `'fade' \| 'slide' \| 'zoom' \| 'bounce'` | `'slide'` | Ein-/Ausblend-Animation. |
-| `timer` | `'none' \| 'bar-bottom' \| 'bar-top' \| 'border' \| 'clock'` | `'bar-bottom'` | Visuelle Restzeit-Anzeige. |
-| `colors` | `ToastColors` | `{}` | Farbüberschreibungen, siehe unten. |
-| `maxToasts` | `number` | `0` (unbegrenzt) | Maximal gleichzeitig sichtbare Toasts. Bei Überschreitung wird der älteste sofort entfernt. |
-| `dedupe` | `boolean` | `false` | Bei identischer Nachricht (gleiche `position`+`type`+Text) einen Zähler (×2, ×3, ...) anzeigen statt eines zweiten Toasts. |
-| `dedupeBadge` | `'corner' \| 'suffix' \| 'pill' \| 'stack'` | `'corner'` | Stil des Zählers, siehe unten. |
-| `dedupeTimer` | `'reset' \| 'continue' \| 'extend'` | `'reset'` | Restzeit-Verhalten bei Wiederholung, siehe unten. |
-| `title` | `string` | – | Optionaler Titel, fett über der Nachricht. |
-| `show` | `'message' \| 'title' \| 'both'` | `'both'` falls `title` gesetzt, sonst `'message'` | Was angezeigt wird. |
-| `titleColor` / `titleSize` | `string` / `string \| number` | – | Farbe/Größe des Titels, unabhängig von `colors.text`. |
-| `messageColor` / `messageSize` | `string` / `string \| number` | – | Farbe/Größe der Nachricht, unabhängig von `colors.text`. |
+| `duration` | `number` | `3000` | Visible duration in ms. |
+| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Where the toast appears. |
+| `type` | `string` | `'default'` | Any type key. `'default'/'success'/'error'/'warning'/'info'` ship with ready-made colors; any other name is a fully custom type (configure its look via `typePresets`). |
+| `animation` | `'fade' \| 'slide' \| 'zoom' \| 'bounce'` | `'slide'` | Enter/exit animation. |
+| `timer` | `'none' \| 'bar-bottom' \| 'bar-top' \| 'border' \| 'clock'` | `'bar-bottom'` | Visual countdown indicator. |
+| `colors` | `ToastColors` | `{}` | Color overrides, see below. |
+| `maxToasts` | `number` | `0` (unlimited) | Maximum toasts visible at once. The oldest is removed immediately when exceeded. |
+| `dedupe` | `boolean` | `false` | When the same message (same `position`+`type`+text) fires again, bump a counter (×2, ×3, ...) on the existing toast instead of creating a second one. |
+| `dedupeBadge` | `'corner' \| 'suffix' \| 'pill' \| 'stack'` | `'corner'` | How the counter is displayed, see below. |
+| `dedupeTimer` | `'reset' \| 'continue' \| 'extend'` | `'reset'` | What happens to the countdown on a repeat, see below. |
+| `title` | `string` | – | Optional title, bold, above the message. |
+| `show` | `'message' \| 'title' \| 'both'` | `'both'` if `title` is set, else `'message'` | What gets rendered. |
+| `titleColor` / `titleSize` | `string` / `string \| number` | – | Title color/size, independent of `colors.text`. |
+| `messageColor` / `messageSize` | `string` / `string \| number` | – | Message color/size, independent of `colors.text`. |
 
-### Eigene Typen
+### Custom types
 
-`type` ist kein fester Enum — jeder String ist gültig. Die 5 eingebauten Namen
-bringen sofort einsatzbereite Farben mit; jeder andere Name ist ein
-vollständig frei definierbarer Typ, dessen Aussehen über `typePresets`
-festgelegt wird:
+`type` isn't a fixed enum — any string is valid. The 5 built-in names come
+with ready-made colors out of the box; any other name is a fully custom type
+whose look is defined via `typePresets`:
 
 ```js
 configureToaster({
   typePresets: {
-    versandBestaetigt: {
+    shipmentConfirmed: {
       colors: { background: '#0f766e' },
       timer: 'clock',
       show: 'both',
-      title: 'Versand bestätigt',
+      title: 'Shipment confirmed',
     },
   },
 });
 
-showToast('Deine Bestellung ist unterwegs.', { type: 'versandBestaetigt' });
+showToast('Your order is on its way.', { type: 'shipmentConfirmed' });
 ```
 
 ### `colors`
 
-| Feld | Beschreibung |
+| Field | Description |
 |---|---|
-| `background` | Hintergrundfarbe des Toasts. |
-| `text` | Textfarbe. |
-| `border` | Statische Umrandungsfarbe (Standard: transparent/unsichtbar), unabhängig vom Timer. Jeder CSS-Farbwert funktioniert, auch `rgba(...)` für eigene Transparenz. |
-| `timerColor` | Farbe der Timer-Anzeige (Balken/Linie/Uhr). |
+| `background` | Background color of the toast. |
+| `text` | Text color. |
+| `border` | Static border color (default: transparent/invisible), independent of the timer. Any CSS color value works, including `rgba(...)` for custom transparency. |
+| `timerColor` | Color of the timer indicator (bar/line/clock). |
 
-### Timer-Stile
+### Timer styles
 
-- **`bar-bottom` / `bar-top`** – ein Balken am unteren/oberen Rand schrumpft über die Dauer.
-- **`border`** – eine dünne Linie läuft exakt entlang der abgerundeten Toast-Kante entlang und baut sich wie eine Uhr ab (SVG `stroke-dashoffset`, keine Farbänderung, kein Hintergrund-Überstand an den Ecken).
-- **`clock`** – ein kleiner Kreis oben rechts läuft wie eine Uhr ab (nutzt CSS `@property`, benötigt einen aktuellen Browser).
-- **`none`** – keine Restzeit-Anzeige.
+- **`bar-bottom` / `bar-top`** – a bar at the bottom/top edge shrinks over the duration.
+- **`border`** – a thin line traces exactly along the toast's rounded edge and depletes like a clock (SVG `stroke-dashoffset`, no color change, no background overhang at the corners).
+- **`clock`** – a small circle top-right counts down like a clock face (uses CSS `@property`, needs a modern browser).
+- **`none`** – no countdown indicator.
 
-### Duplikate stapeln (`dedupe`)
+### Stacking duplicates (`dedupe`)
 
-Löst derselbe Aufruf (gleiche `position`+`type`+Text) mehrfach hintereinander aus, wird kein zweiter Toast erzeugt, sondern ein Zähler am bestehenden aktualisiert:
+If the same call (same `position`+`type`+text) fires repeatedly, no second
+toast is created — a counter on the existing one is updated instead:
 
 ```js
-showToast('Gespeichert!', { type: 'success', dedupe: true });
-showToast('Gespeichert!', { type: 'success', dedupe: true }); // -> selber Toast, zeigt ×2
+showToast('Saved!', { type: 'success', dedupe: true });
+showToast('Saved!', { type: 'success', dedupe: true }); // -> same toast, shows ×2
 ```
 
-**`dedupeBadge`** (Darstellung des Zählers):
-- `'corner'` – kleines rundes Badge oben links im Toast.
-- `'suffix'` – Zähler wird direkt an den Text angehängt ("Gespeichert  ×2").
-- `'pill'` – abgerundeter Chip am Zeilenende, innerhalb des Textbereichs.
-- `'stack'` – wie `'corner'`, zusätzlich zwei leicht versetzte Karten-Kanten dahinter (Stapel-Optik).
+**`dedupeBadge`** (how the counter is shown):
+- `'corner'` – small round badge in the top-left corner of the toast.
+- `'suffix'` – counter is appended directly to the text ("Saved  ×2").
+- `'pill'` – rounded chip at the end of the line, inside the text area.
+- `'stack'` – like `'corner'`, plus a peeking card behind it once there are 2 messages, capped at a stack depth of 3 (2 peek layers) for 3 or more. The peek layers fade in/out with the same animation as the toast itself, including on expiry.
 
-**`dedupeTimer`** (was mit der Restzeit bei einer Wiederholung passiert):
-- `'reset'` – Restzeit-Anzeige startet komplett neu (volle `duration` ab dem letzten Duplikat).
-- `'continue'` – ursprüngliche Restzeit läuft unbeeinflusst weiter, nur der Zähler steigt.
-- `'extend'` – verbleibende Restzeit + neue `duration` werden addiert, Anzeige läuft entsprechend länger.
+**`dedupeTimer`** (what happens to the countdown on a repeat):
+- `'reset'` – the countdown restarts from full `duration`, counted from the latest duplicate.
+- `'continue'` – the original countdown keeps running unaffected, only the counter increases.
+- `'extend'` – remaining time + new `duration` are added together, so the indicator runs proportionally longer.
 
-## Globale Defaults: `configureToaster()`
+## Global defaults: `configureToaster()`
 
-Einmal beim App-Start aufrufen, um Standardwerte für alle folgenden
-`showToast()`-Aufrufe zu setzen. Jeder einzelne Aufruf kann jedes Feld
-weiterhin gezielt überschreiben.
+Call this once at app startup to set defaults for every subsequent
+`showToast()` call. Any individual call can still override any field.
 
 ```js
 import { configureToaster } from 'toaster';
@@ -144,28 +149,29 @@ configureToaster({
 });
 ```
 
-`typePresets` legt pro Typ (`default`/`success`/`error`/`warning`/`info`)
-eigene Standards für `duration`, `position`, `animation`, `timer` und
-`colors` fest. Auflösungsreihenfolge pro Aufruf:
+`typePresets` sets per-type (`default`/`success`/`error`/`warning`/`info`, or
+any custom name) defaults for `duration`, `position`, `animation`, `timer`,
+`colors`, `dedupe*`, and `title`/`show`/title-message styling. Resolution
+order per call:
 
-`explizite Option im showToast()-Aufruf` → `typePresets[type]` → `globale configureToaster()-Defaults` → `eingebauter Fallback`
+`explicit option in the showToast() call` → `typePresets[type]` → `global configureToaster() defaults` → `built-in fallback`
 
-## Empfehlung: eigene Wrapper-Klasse statt verstreuter Aufrufe
+## Recommendation: a dedicated wrapper class instead of scattered calls
 
-`showToast(text, { ...zehn Optionen })` an zig Stellen im Code zu wiederholen
-führt schnell zu Inkonsistenzen (mal `duration: 3000`, mal `4000`, mal ein
-falscher Farbton). Kapsle die Konfiguration stattdessen an **einer** Stelle:
+Repeating `showToast(text, { ...ten options })` all over your codebase
+quickly drifts out of sync (`duration: 3000` here, `4000` there, a slightly
+wrong shade of a color). Centralize the configuration in **one** place instead:
 
-1. Ruf `configureToaster()` **einmal** beim Start der App auf (Design-System:
-   Farben, Timer-Stil, Positionen, `maxToasts`).
-2. Biete darüber eine eigene Klasse/Service mit sprechenden Methoden an
-   (`success()`, `error()`, `warning()`, `info()`) statt überall `type: '...'`
-   zu tippen.
-3. Nur diese eine Klasse kennt die `toaster`-API — der Rest der App kennt nur
-   `toast.success('Gespeichert')`. Ein API-Wechsel (z.B. anderes Toast-Paket)
-   betrifft dann nur eine Datei.
+1. Call `configureToaster()` **once** at app startup (design system: colors,
+   timer style, positions, `maxToasts`).
+2. Expose your own class/service with meaningful methods (`success()`,
+   `error()`, `warning()`, `info()`) instead of typing `type: '...'`
+   everywhere.
+3. Only that one class knows the `toaster` API — the rest of the app just
+   calls `toast.success('Saved')`. Swapping the underlying package later
+   only touches one file.
 
-### Beispiel: Angular
+### Example: Angular
 
 ```ts
 // toast.service.ts
@@ -175,7 +181,7 @@ import { showToast, configureToaster, ToastOptions } from 'toaster';
 @Injectable({ providedIn: 'root' })
 export class ToastService {
   constructor() {
-    // Zentrale Design-Entscheidungen — einmalig, an einer Stelle.
+    // Central design decisions — set once, in one place.
     configureToaster({
       duration: 3500,
       position: 'top-right',
@@ -188,7 +194,7 @@ export class ToastService {
           animation: 'bounce',
           colors: { background: '#c0392b', timerColor: '#fff' },
         },
-        warning: { colors: { background: '#b7791f' } },
+        warning: { colors: { background: '#d97706' } },
         info: { colors: { background: '#2563eb' } },
       },
     });
@@ -222,27 +228,15 @@ export class Dashboard {
   private readonly toast = inject(ToastService);
 
   showErrorToast(): void {
-    this.toast.error('Dashboard-Daten konnten nicht geladen werden.');
+    this.toast.error('Failed to load dashboard data.');
   }
 }
 ```
 
-Weil `configureToaster()` beim ersten Erzeugen des (Singleton-)Services
-läuft, muss der Rest der App nie wieder Farben, Timer-Stile oder Positionen
-kennen — nur noch `success/error/warning/info`.
+Because `configureToaster()` runs the first time the (singleton) service is
+created, the rest of the app never needs to know colors, timer styles, or
+positions again — just `success/error/warning/info`.
 
-Das gleiche Muster funktioniert identisch in React (ein `useToast()`-Hook
-bzw. ein Modul, das `configureToaster()` beim Import einmalig ausführt), Vue
-(ein Plugin/Composable) oder Svelte (ein Store-Modul).
-
-## Testprojekt / Demo
-
-Im Ordner [`demo/`](demo/) liegt eine interaktive Testseite mit einem
-UI-Baukasten für alle 5 Toast-Typen, mehrsprachigen Beispieltexten und
-Code-Snippets für 5 Frameworks.
-
-```bash
-npm run demo
-```
-
-Danach `http://localhost:5050` öffnen.
+The same pattern works identically in React (a `useToast()` hook or a module
+that runs `configureToaster()` once on import), Vue (a plugin/composable), or
+Svelte (a store module).

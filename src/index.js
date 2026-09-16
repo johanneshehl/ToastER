@@ -451,14 +451,22 @@ function removeToast(item, toast, container) {
     layer.classList.remove('is-visible');
   });
 
-  toast.addEventListener('transitionend', (event) => {
+  // { once: true } würde den Listener bereits beim ersten transitionend
+  // entfernen - auch wenn das Event (durch Bubbling) von einem Kind-Element
+  // wie dem Timer-Balken/-SVG stammt, dessen eigene Transition zufällig zur
+  // gleichen Zeit endet. Der echte Fade-Out-Abschluss des Toasts würde dann
+  // nie mehr ankommen und der Toast bliebe unsichtbar im DOM hängen. Deshalb
+  // manuell entfernen, erst wenn wirklich event.target === toast zutrifft.
+  const onTransitionEnd = (event) => {
     if (event.target !== toast) return;
+    toast.removeEventListener('transitionend', onTransitionEnd);
     item.remove();
     if (container.childElementCount === 0) {
       container.remove();
       delete containers[container.dataset.position];
     }
-  }, { once: true });
+  };
+  toast.addEventListener('transitionend', onTransitionEnd);
 }
 
 // Fügt einen Stack-Peek-Layer ein und blendet ihn mit der gleichen

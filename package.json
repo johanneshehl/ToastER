@@ -1,6 +1,9 @@
 {
-  "name": "toaster",
-  "version": "1.0.0",
+  "name": "@johannes.hehl/toaster",
+  "version": "1.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Zero-Config Toast Notifications mit automatischem Styling und 6 Positionen",
   "main": "src/index.js",
   "types": "index.d.ts",
