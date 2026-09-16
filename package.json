@@ -1,0 +1,15 @@
+{
+  "name": "toaster",
+  "version": "1.0.0",
+  "description": "Zero-Config Toast Notifications mit automatischem Styling und 6 Positionen",
+  "main": "src/index.js",
+  "types": "index.d.ts",
+  "files": ["src", "index.d.ts"],
+  "scripts": {
+    "demo": "node demo/server.js"
+  },
+  "keywords": ["toast", "notification", "angular", "javascript"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
