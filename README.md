@@ -2,6 +2,9 @@
 
 [![Web Builder](https://img.shields.io/badge/Web%20Builder-toaster.johanneshehl.com-2563eb?style=flat-square)](https://toaster.johanneshehl.com)
 
+[![npm version](https://img.shields.io/npm/v/dein-paketname.svg)](https://www.npmjs.com/package/dein-paketname)
+[![npm downloads](https://img.shields.io/npm/dm/dein-paketname.svg)](https://www.npmjs.com/package/dein-paketname)
+
 Zero-config toast notifications for the browser. No CSS import, no build
 step, no framework lock-in — `npm install` and call `showToast(...)`.
 
